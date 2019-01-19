@@ -73,5 +73,4 @@ kilos <- html_text(precioProductos)
 nombreProducto <- html_nodes(datostienda, "[itemprop=name]")
 nombreProducto <- html_text(nombreProducto)
 
-
-
+union <- c(marca,nombreProducto,kilos,precios)
