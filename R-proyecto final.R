@@ -47,3 +47,24 @@ contenidoTiendaPet <- html_nodes(contenidoTiendaPet,'.catalogo_click_detail')
 
 #Extracción links página
 links<-html_attr(contenidoTiendaPet,"href")
+
+
+
+#========Extraccion datos de cada links===========#
+
+datoslink <- 'https://www.tiendapet.cl/catalogo/producto/1020/taste-of-the-wild-wetlands-dry'
+
+# ExtracciÃ³n de marcas alimentos 
+marca <- html_nodes(datostienda, "[itemprop=brand]")
+marca <- html_text(marca)
+
+# ExtracciÃ³n de precios alimento 
+precioProductos <- html_nodes(datostienda,'select')
+precioProductos <- html_nodes(precioProductos, 'option')
+precios <- html_attr(precioProductos, 'data-pricereal')
+
+#Eliminando los puntos de los precios
+precios <- gsub("[.]","",precios)
+
+
+
