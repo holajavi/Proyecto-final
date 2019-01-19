@@ -43,3 +43,4 @@ webpage <-read_html(paginaTiendaPet)
 # Extracción del texto contenido en la clase 
 contenidoTiendaPet <- html_nodes(webpage,'.block-producto')
 
+contenidoTiendaPet <- html_nodes(contenidoTiendaPet,'.catalogo_click_detail')
