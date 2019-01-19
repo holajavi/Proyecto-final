@@ -32,47 +32,59 @@ library('rvest')
 # Leyendo el HTML del archivo
 webpage <- read_html(archivo)
 
+
 #=================TiendaPet.cl================#
 
-# 1.- Se realiza la b煤squeda y se copia la URL generada
-# 2.- Se asigna la url generada a la variable paginaTiendaPet
-paginaTiendaPet <- paste('https://www.tiendapet.cl/catalogo/buscar/',i,'?term=alimento+perros',sep = "")
-
-webpage <-read_html(paginaTiendaPet)
-
-# Extracci贸n del texto contenido en la clase 
-contenidoTiendaPet <- html_nodes(webpage,'.block-producto')
-
-contenidoTiendaPet <- html_nodes(contenidoTiendaPet,'.catalogo_click_detail')
-
-#Extracci髇 links p醙ina
-links<-html_attr(contenidoTiendaPet,"href")
-
-
-
-#========Extraccion datos de cada links===========#
-
-datoslink <- 'https://www.tiendapet.cl/catalogo/producto/1020/taste-of-the-wild-wetlands-dry'
-
-datostienda <-read_html(DatosproductosTienda)
-
-# Extracci贸n de marcas alimentos 
-marca <- html_nodes(datostienda, "[itemprop=brand]")
-marca <- html_text(marca)
-
-# Extracci贸n de precios alimento 
-precioProductos <- html_nodes(datostienda,'select')
-precioProductos <- html_nodes(precioProductos, 'option')
-precios <- html_attr(precioProductos, 'data-pricereal')
-
-#Eliminando los puntos de los precios
-precios <- gsub("[.]","",precios)
-
-# Extraccion kilos
-kilos <- html_text(precioProductos)
-
-#Extraccion nombre producto
-nombreProducto <- html_nodes(datostienda, "[itemprop=name]")
-nombreProducto <- html_text(nombreProducto)
-
-
+for(i in 1:3){
+  # 1.- Se realiza la b煤squeda y se copia la URL generada
+  # 2.- Se asigna la url generada a la variable paginaMestizosCl
+  paginaTiendaPet <- paste('https://www.tiendapet.cl/catalogo/buscar/',i,'?term=alimento+perros',sep = "")
+  
+  print(paginaTiendaPet)
+  
+  webpage <-read_html(paginaTiendaPet)
+  
+  
+  # Extracci贸n del texto contenido en la clase 
+  contenidoTiendaPet <- html_nodes(webpage,'.block-producto')
+  
+  contenidoTiendaPet <- html_nodes(contenidoTiendaPet,'.catalogo_click_detail')
+  
+  #Extracci髇 links p醙ina
+  links<-html_attr(contenidoTiendaPet,"href")
+  
+  
+  
+  #========Extraccion datos de cada links===========#
+  
+  for(link in links){
+    print(link)
+    DatosproductosTienda<- link
+    
+    datostienda <-read_html(DatosproductosTienda)
+    
+    # Extracci贸n de marcas alimentos 
+    marca <- html_nodes(datostienda, "[itemprop=brand]")
+    marca <- html_text(marca)
+    
+    # Extracci贸n de precios alimento 
+    precioProductos <- html_nodes(datostienda,'select')
+    precioProductos <- html_nodes(precioProductos, 'option')
+    precios <- html_attr(precioProductos, 'data-pricereal')
+    
+    #Eliminando los puntos de los precios
+    precios <- gsub("[.]","",precios)
+    
+    
+    
+    # Extraccion kilos
+    kilos <- html_text(precioProductos)
+    
+    #Extraccion nombre producto
+    nombreProducto <- html_nodes(datostienda, "[itemprop=name]")
+    nombreProducto <- html_text(nombreProducto)
+    
+    
+    union <- c(marca,nombreProducto,kilos,precios)
+}
+}
