@@ -54,6 +54,8 @@ links<-html_attr(contenidoTiendaPet,"href")
 
 datoslink <- 'https://www.tiendapet.cl/catalogo/producto/1020/taste-of-the-wild-wetlands-dry'
 
+datostienda <-read_html(DatosproductosTienda)
+
 # Extracción de marcas alimentos 
 marca <- html_nodes(datostienda, "[itemprop=brand]")
 marca <- html_text(marca)
@@ -73,4 +75,4 @@ kilos <- html_text(precioProductos)
 nombreProducto <- html_nodes(datostienda, "[itemprop=name]")
 nombreProducto <- html_text(nombreProducto)
 
-union <- c(marca,nombreProducto,kilos,precios)
+
