@@ -44,3 +44,6 @@ webpage <-read_html(paginaTiendaPet)
 contenidoTiendaPet <- html_nodes(webpage,'.block-producto')
 
 contenidoTiendaPet <- html_nodes(contenidoTiendaPet,'.catalogo_click_detail')
+
+#Extracción links página
+links<-html_attr(contenidoTiendaPet,"href")
