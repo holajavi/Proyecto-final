@@ -39,3 +39,7 @@ webpage <- read_html(archivo)
 paginaTiendaPet <- paste('https://www.tiendapet.cl/catalogo/buscar/',i,'?term=alimento+perros',sep = "")
 
 webpage <-read_html(paginaTiendaPet)
+
+# Extracción del texto contenido en la clase 
+contenidoTiendaPet <- html_nodes(webpage,'.block-producto')
+
