@@ -66,5 +66,12 @@ precios <- html_attr(precioProductos, 'data-pricereal')
 #Eliminando los puntos de los precios
 precios <- gsub("[.]","",precios)
 
+# Extraccion kilos
+kilos <- html_text(precioProductos)
+
+#Extraccion nombre producto
+nombreProducto <- html_nodes(datostienda, "[itemprop=name]")
+nombreProducto <- html_text(nombreProducto)
+
 
 
