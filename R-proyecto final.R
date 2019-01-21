@@ -1,4 +1,5 @@
-# Usando la librer√???a rvest
+# install.packages('rvest')
+# Usando la librer√≠a rvest
 library('rvest')
 
 # Leyendo el HTML del archivo
@@ -26,7 +27,7 @@ webpage <- html_nodes(webpage,".pod_item")
 
 
 
-# Usando la librer√???a rvest
+# Usando la librer√≠a rvest
 library('rvest')
 
 # Leyendo el HTML del archivo
@@ -34,6 +35,11 @@ webpage <- read_html(archivo)
 
 
 #=================TiendaPet.cl================#
+
+# FALTA: Leer csv y transformarlo en dataframe
+
+# Crea data.frame vacio
+productos <- data.frame()
 
 for(i in 1:3){
   # 1.- Se realiza la b√∫squeda y se copia la URL generada
@@ -50,7 +56,7 @@ for(i in 1:3){
   
   contenidoTiendaPet <- html_nodes(contenidoTiendaPet,'.catalogo_click_detail')
   
-  #ExtracciÛn links p·gina
+  #Extracci?n links p?gina
   links<-html_attr(contenidoTiendaPet,"href")
   
   
@@ -84,7 +90,25 @@ for(i in 1:3){
     nombreProducto <- html_nodes(datostienda, "[itemprop=name]")
     nombreProducto <- html_text(nombreProducto)
     
-    
-    union <- c(marca,nombreProducto,kilos,precios)
+    # Este if es para los productos sin stoc
+    if(length(kilos)!=0){
+      
+      # Se recorren los productos
+      for (j in 1:length(kilos)) {
+        # Se crea data.frame que contine el valor y peso de un producto
+        df <- data.frame(marca = marca, producto = nombreProducto, kg = kilos[j], precio = precios[j])
+        
+        # Se junta la informaci√≥n de un producto con el de todos los productos
+        productos <- rbind(productos,df)
+      }
+    }else{
+      # Los productos sin stock se guardan con el kilo y el precio con NA
+      df <- data.frame(marca = marca, producto = nombreProducto, kg = NA, precio = NA)
+      
+      # Se junta la informaci√≥n del producto sin stock con todos los productos
+      productos <- rbind(productos,df)
+    }
 }
 }
+
+## FALTA: Guardar los productos en csv
