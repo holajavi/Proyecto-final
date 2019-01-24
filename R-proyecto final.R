@@ -1,4 +1,5 @@
-# Usando la librerÃ???a rvest
+# install.packages('rvest')
+# Usando la librería rvest
 library('rvest')
 
 # Leyendo el HTML del archivo
@@ -6,7 +7,7 @@ webpage <- read_html(archivo)
 
 #==================== falabella.com ====================#
 
-# 1.- Se realiza la bÃºsqueda y se copia la URL generada
+# 1.- Se realiza la búsqueda y se copia la URL generada
 # 2.- Se asigna la url generada a la variable paginaFalabellaCom
 paginaFalabellaCom <- 'https://www.falabella.com/falabella-cl/search?Ntt=smarphone&sortBy=5'
 webpage <-read_html(paginaFalabellaCom)
@@ -26,7 +27,7 @@ webpage <- html_nodes(webpage,".pod_item")
 
 
 
-# Usando la librerÃ???a rvest
+# Usando la librería rvest
 library('rvest')
 
 # Leyendo el HTML del archivo
@@ -35,9 +36,14 @@ webpage <- read_html(archivo)
 
 #=================TiendaPet.cl================#
 
+# FALTA: Leer csv y transformarlo en dataframe
+
+# Crea data.frame vacio
+productos <- data.frame()
+
 for(i in 1:3){
-  # 1.- Se realiza la bÃºsqueda y se copia la URL generada
-  # 2.- Se asigna la url generada a la variable paginaMestizosCl
+  # 1.- Se realiza la búsqueda y se copia la URL generada
+  # 2.- Se asigna la url generada a la variable paginaTiendaPet
   paginaTiendaPet <- paste('https://www.tiendapet.cl/catalogo/buscar/',i,'?term=alimento+perros',sep = "")
   
   print(paginaTiendaPet)
@@ -45,12 +51,12 @@ for(i in 1:3){
   webpage <-read_html(paginaTiendaPet)
   
   
-  # ExtracciÃ³n del texto contenido en la clase 
+  # Extracción del texto contenido en la clase 
   contenidoTiendaPet <- html_nodes(webpage,'.block-producto')
   
   contenidoTiendaPet <- html_nodes(contenidoTiendaPet,'.catalogo_click_detail')
   
-  #Extracción links página
+  #Extracci?n links p?gina
   links<-html_attr(contenidoTiendaPet,"href")
   
   
@@ -63,11 +69,11 @@ for(i in 1:3){
     
     datostienda <-read_html(DatosproductosTienda)
     
-    # ExtracciÃ³n de marcas alimentos 
+    # Extracción de marcas alimentos 
     marca <- html_nodes(datostienda, "[itemprop=brand]")
     marca <- html_text(marca)
     
-    # ExtracciÃ³n de precios alimento 
+    # Extracción de precios alimento 
     precioProductos <- html_nodes(datostienda,'select')
     precioProductos <- html_nodes(precioProductos, 'option')
     precios <- html_attr(precioProductos, 'data-pricereal')
@@ -84,7 +90,52 @@ for(i in 1:3){
     nombreProducto <- html_nodes(datostienda, "[itemprop=name]")
     nombreProducto <- html_text(nombreProducto)
     
-    
-    union <- c(marca,nombreProducto,kilos,precios)
+    # Este if es para los productos sin stoc
+    if(length(kilos)!=0){
+      
+      # Se recorren los productos
+      for (j in 1:length(kilos)) {
+        # Se crea data.frame que contine el valor y peso de un producto
+        df <- data.frame(marca = marca, producto = nombreProducto, kg = kilos[j], precio = precios[j])
+        
+        # Se junta la información de un producto con el de todos los productos
+        productos <- rbind(productos,df)
+      }
+    }else{
+      # Los productos sin stock se guardan con el kilo y el precio con NA
+      df <- data.frame(marca = marca, producto = nombreProducto, kg = NA, precio = NA)
+      
+      # Se junta la información del producto sin stock con todos los productos
+      productos <- rbind(productos,df)
+      
+      library('ggplot2')
+      
+      #Grafico de barra 
+      productos %>%
+        ggplot() +
+        aes(x = marca, y = precio) +
+        geom_bar(stat="identity")
+      
+      #Grafico de barra 
+      productos %>%
+        ggplot() +
+        aes(x = kg, y = precio) +
+        geom_bar(stat="identity")
+      
+      
+      
+      #Grafico boxplo
+      productos %>%
+        ggplot() +
+        geom_boxplot(aes(x = producto, y = precio)) +
+        theme_bw()
+      
+      #guardar la informacion en cvs
+      write.csv(productos, file = "alimentoperros")
+    }
+  }
 }
-}
+
+## FALTA: Guardar los productos en csv
+
+
