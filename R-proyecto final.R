@@ -26,7 +26,6 @@ webpage <- html_nodes(webpage,".pod_item")
 
 
 
-
 # Usando la librería rvest
 library('rvest')
 
@@ -36,7 +35,6 @@ webpage <- read_html(archivo)
 
 #=================TiendaPet.cl================#
 
-# FALTA: Leer csv y transformarlo en dataframe
 
 # Crea data.frame vacio
 productos <- data.frame()
@@ -86,17 +84,23 @@ for(i in 1:3){
     # Extraccion kilos
     kilos <- html_text(precioProductos)
     
+    # Pasando todas las palabras a minÃºsculas
+    kg <- tolower(kilos)
+    
+    #Eliminando los puntos de los kilos
+    kg <- gsub("[.]","",kg)
+    
     #Extraccion nombre producto
     nombreProducto <- html_nodes(datostienda, "[itemprop=name]")
     nombreProducto <- html_text(nombreProducto)
     
     # Este if es para los productos sin stoc
-    if(length(kilos)!=0){
+    if(length(kg)!=0){
       
       # Se recorren los productos
-      for (j in 1:length(kilos)) {
+      for (j in 1:length(kg)) {
         # Se crea data.frame que contine el valor y peso de un producto
-        df <- data.frame(marca = marca, producto = nombreProducto, kg = kilos[j], precio = precios[j])
+        df <- data.frame(marca = marca, producto = nombreProducto, kg = kg[j], precio = precios[j])
         
         # Se junta la información de un producto con el de todos los productos
         productos <- rbind(productos,df)
@@ -113,22 +117,14 @@ for(i in 1:3){
       #Grafico de barra 
       productos %>%
         ggplot() +
-        aes(x = marca, y = precio) +
+        aes(x = precio, y = producto) +
         geom_bar(stat="identity")
-      
+     
       #Grafico de barra 
       productos %>%
         ggplot() +
-        aes(x = kg, y = precio) +
+        aes(x = kg, y = marca) +
         geom_bar(stat="identity")
-      
-      
-      
-      #Grafico boxplo
-      productos %>%
-        ggplot() +
-        geom_boxplot(aes(x = producto, y = precio)) +
-        theme_bw()
       
       #guardar la informacion en cvs
       write.csv(productos, file = "alimentoperros")
@@ -136,6 +132,6 @@ for(i in 1:3){
   }
 }
 
-## FALTA: Guardar los productos en csv
+
 
 
