@@ -39,7 +39,7 @@ webpage <- read_html(archivo)
 # Crea data.frame vacio
 productos <- data.frame()
 
-for(i in 1:3){
+for(i in 1:40){
   # 1.- Se realiza la búsqueda y se copia la URL generada
   # 2.- Se asigna la url generada a la variable paginaTiendaPet
   paginaTiendaPet <- paste('https://www.tiendapet.cl/catalogo/buscar/',i,'?term=alimento+perros',sep = "")
@@ -112,26 +112,11 @@ for(i in 1:3){
       # Se junta la información del producto sin stock con todos los productos
       productos <- rbind(productos,df)
       
-      library('ggplot2')
-      
-      #Grafico de barra 
-      productos %>%
-        ggplot() +
-        aes(x = precio, y = producto) +
-        geom_bar(stat="identity")
-     
-      #Grafico de barra 
-      productos %>%
-        ggplot() +
-        aes(x = kg, y = marca) +
-        geom_bar(stat="identity")
-      
-      #guardar la informacion en cvs
-      write.csv(productos, file = "alimentoperros")
     }
   }
 }
 
-
+    #guardar la informacion en cvs
+    write.csv(productos, file = "alimentoperros")
 
 
